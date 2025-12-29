@@ -1,0 +1,890 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+     <link rel="icon" type="image/x-icon" href="avocado.jpg">
+  <title>العناصر الغذائية</title>
+  <style>
+    :root{
+      --green-900: #f8fffb;
+      --green-700: #000000;
+      --green-500: #afe7a1;
+      --green-300: #8fe0b0;
+      --green-100: #f7ece9;
+      --card-radius: 14px;
+      --card-padding: 18px;
+      --shadow: 0 12px 30px rgba(138, 28, 0, 0.08);
+      --transition: 320ms cubic-bezier(.2,.9,.3,1);
+      --green-1: #8f9290;
+      --green-2: #3c413e;
+      --card-shadow: 0 6px 18px rgba(10,10,10,0.06);
+    }
+
+    * { box-sizing: border-box; }
+    html, body { height: 100%; margin: 0; padding: 0; }
+    body {
+      font-family: 'Cairo', 'Tajawal', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background: #fff;
+      color: #123;
+      line-height: 1.45;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+
+    .global-nav .navbar {
+      background: #6b8e23;
+      padding: 12px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+    .global-nav .navbar a {
+      color: white;
+      text-decoration: none;
+      margin: 0 12px;
+      font-size: 15px;
+    }
+    .global-nav .navbar a:hover {
+      background-color: #225203;
+      padding: 5px;
+      border-radius: 5px;
+    }
+    .global-footer{
+      background: #6b8e23;
+      color: white;
+      text-align: center;
+      padding: 15px;
+      font-size: 14px;
+      margin-top: 28px;
+    }
+    .app-nutrients .site-header{
+      text-align:center;
+      margin-bottom:18px;
+      direction: rtl;
+    }
+    .app-nutrients .site-header h1{
+      margin:0;
+      font-size:28px;
+      color:var(--green-900);
+      letter-spacing:0.6px;
+      font-family: "Tajawal", sans-serif;
+    }
+    .app-nutrients .lead{ margin:6px 0 18px; color:var(--green-700); font-weight:400 }
+
+    .app-nutrients .container{ width:100%; max-width:1200px; margin-inline:auto; padding:0 12px }
+    .app-nutrients .cards{
+      display:grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap:20px;
+    }
+
+    .app-nutrients .card{
+      perspective: 1200px;
+      outline: none;
+      cursor: pointer;
+      opacity: 0;
+      transform: translateY(18px);
+      transition: opacity 520ms ease, transform 520ms ease;
+    }
+    .app-nutrients .card.revealed{
+      opacity:1;
+      transform: translateY(0);
+    }
+    .app-nutrients .card:focus { box-shadow: 0 6px 18px rgba(23,162,93,0.18); border-radius: var(--card-radius); }
+
+    .app-nutrients .card-inner{
+      position:relative;
+      width:100%;
+      height:380px;
+      transition: transform var(--transition), box-shadow var(--transition);
+      transform-style: preserve-3d;
+      border-radius: var(--card-radius);
+      background: linear-gradient(180deg, rgba(59, 124, 6, 0.85), rgba(108, 138, 105, 0.95));
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+
+    .app-nutrients .card-media{
+      height:60%;
+      overflow:hidden;
+      background:var(--green-100);
+    }
+    .app-nutrients .card-media img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+      transform-origin:center;
+      transition: transform var(--transition);
+    }
+    .app-nutrients .card-body{
+      padding: var(--card-padding);
+    }
+    .app-nutrients .card-title{
+      margin:0 0 8px 0;
+      font-size:18px;
+      color:var(--green-900);
+      font-family: "Tajawal", sans-serif;
+    }
+    .app-nutrients .examples{ margin:0; padding:0; list-style:none; color:var(--green-700); font-size:14px }
+    .app-nutrients .examples + .open-details{ margin-top:12px; }
+
+    .app-nutrients button { font-family: inherit; }
+    .app-nutrients .open-details{
+      display:inline-block;
+      margin-top:10px;
+      background:transparent;
+      border:1px solid var(--green-300);
+      color:var(--green-700);
+      padding:8px 12px;
+      border-radius:10px;
+      cursor:pointer;
+      transition: background var(--transition), transform var(--transition);
+    }
+    .app-nutrients .open-details:hover{ background: rgba(240, 234, 230, 0.06); transform: translateY(-2px) }
+    .app-nutrients .open-details:focus{ outline: 3px solid rgba(214, 103, 12, 0.14) }
+
+    .app-nutrients .card:hover .card-inner,
+    .app-nutrients .card:focus .card-inner{
+      transform: translateY(-6px) rotateX(3deg);
+      box-shadow: 0 20px 40px rgba(29, 35, 3, 0.12);
+    }
+    .app-nutrients .card:hover .card-media img,
+    .app-nutrients .card:focus .card-media img{
+      transform: scale(1.06) translateY(-6px);
+    }
+
+    /* Modal styles (scoped) */
+    .app-nutrients .modal-backdrop{
+      position:fixed;
+      inset:0;
+      background: rgba(6,54,26,0.28);
+      backdrop-filter: blur(4px) saturate(120%);
+      z-index:1000;
+      opacity:0;
+      transition: opacity 220ms ease;
+    }
+    .app-nutrients .modal{
+      position:fixed;
+      inset:0;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      z-index:1001;
+      pointer-events:none;
+    }
+    .app-nutrients .modal[hidden] { pointer-events:none }
+    .app-nutrients .modal-panel{
+      width:min(920px, 95%);
+      max-height:90vh;
+      background: linear-gradient(180deg, #c2bf35, rgba(62, 143, 76, 0.98));
+      border-radius:14px;
+      box-shadow: 0 28px 60px rgba(3,35,18,0.18);
+      overflow:auto;
+      display:flex;
+      gap:18px;
+      direction: rtl;
+      transform: translateY(8px) scale(.98);
+      opacity:0;
+      transition: transform 240ms var(--transition), opacity 240ms ease;
+    }
+    .app-nutrients .modal.open .modal-panel { transform: none; opacity:1 }
+    .app-nutrients .modal.open ~ .modal-backdrop { opacity:1 }
+
+    .app-nutrients .modal-media{ flex:0 0 44%; min-width:220px; max-height:60vh; overflow:hidden; border-radius:12px 0 0 12px; background:var(--green-100) }
+    .app-nutrients .modal-media img{ width:100%; height:100%; object-fit:cover; display:block }
+    .app-nutrients .modal-content{ padding:18px; flex:1 1 auto; color:var(--green-900) }
+    .app-nutrients .modal-content h2{ margin:0 0 8px; font-size:20px }
+    .app-nutrients .modal-examples{ margin:6px 0; color:var(--green-700) }
+    .app-nutrients .modal-desc{ margin-top:12px; color:var(--green-700); line-height:1.5 }
+
+    .app-nutrients .modal-actions{ display:flex; gap:10px; margin-top:16px; flex-wrap:wrap }
+    .app-nutrients .btn{ padding:8px 12px; border-radius:10px; border:1px solid transparent; background:transparent; cursor:pointer }
+    .app-nutrients .btn-primary{ background:var(--green-500); color:white; border-color:var(--green-500) }
+    .app-nutrients .modal-close{
+      position:absolute;
+      inset-inline-start: auto;
+      inset-inline-end: 12px;
+      top:12px;
+      background:transparent;
+      border:none;
+      font-size:26px;
+      color:var(--green-700);
+      cursor:pointer;
+      line-height:1;
+    }
+
+    @media (max-width:720px){
+      .app-nutrients .card-inner{ height:320px }
+      .app-nutrients .modal-panel{ flex-direction:column; width:98%; max-height:92vh; border-radius:12px }
+      .app-nutrients .modal-media{ width:100%; flex:0 0 220px; border-radius:12px 12px 0 0; max-height:40vh }
+      .app-nutrients .modal-close{ inset-inline-end:12px }
+    }
+    @media (prefers-reduced-motion: reduce){
+      .app-nutrients .card, .app-nutrients .card-inner, .app-nutrients .card-media img, .app-nutrients .modal-panel, .app-nutrients .modal-backdrop { transition: none !important }
+    }
+
+    /* ======= App 2: Meals & flip cards (scoped to .app-meals) ======= */
+    .app-meals .hllax-img{display:block;width:100%;height:160px;object-fit:cover;transform:translateZ(0);transition:transform .25s ease}
+
+    .app-meals .cta{
+      display:inline-block;margin-top:1rem;padding:0.6rem 1rem;background:var(--green-2);color:white;border-radius:8px;text-decoration:none;
+      box-shadow: 0 6px 16px rgba(10,80,50,0.18);
+    }
+
+    .app-meals .section-title{margin:0 0 0.2rem;font-size:1.2rem}
+    .app-meals .section-sub{margin:0 0 1rem;color:#3a3a3a;font-size:0.95rem}
+
+    .app-meals .grid{
+      display:grid;
+      grid-template-columns: repeat(auto-fit,minmax(240px,1fr));
+      gap:1.2rem;
+      margin-top:1rem;
+    }
+
+    .app-meals .card{
+      perspective: 1100px;
+      cursor: pointer;
+      outline: none;
+    }
+    .app-meals .card-inner{
+      position:relative;
+      width:100%;
+      height:380px;
+      transition: transform 0.8s cubic-bezier(.2,.9,.3,1);
+      transform-style: preserve-3d;
+      border-radius:14px;
+    }
+    .app-meals .card.is-flipped .card-inner{ transform: rotateY(180deg); }
+
+    .app-meals .card-front, .app-meals .card-back{
+      position:absolute;
+      inset:0;
+      backface-visibility: hidden;
+      border-radius:14px;
+      overflow:hidden;
+      box-shadow: var(--card-shadow);
+    }
+
+    .app-meals .card-front{
+      background: linear-gradient(180deg, #92928d 0%, #616050 100%);
+      display:flex;
+      flex-direction:column;
+    }
+    .app-meals .card-front img{width:100%;height:180px;object-fit:cover;display:block}
+    .app-meals .card-body{padding:1rem;display:flex;flex-direction:column;gap:0.6rem}
+    .app-meals .card-body h3{margin:0;color: #d0e7db}
+    .app-meals .card-body p{margin:0;color:#ddf7d5;font-size:0.95rem}
+    .app-meals .details-btn{
+      margin-top:auto;
+      padding:0.5rem 0.8rem;background:linear-gradient(90deg,var(--green-1),var(--green-2));
+      color:white;border:none;border-radius:8px;cursor:pointer;font-weight:600;
+    }
+
+    .app-meals .card-back{
+      background: linear-gradient(180deg,#748674 0%, #666e66 100%);
+      transform: rotateY(180deg);
+      display:flex;align-items:center;justify-content:center;padding:1rem;
+    }
+    .app-meals .card-back .card-body{padding:0;text-align:right}
+    .app-meals .ingredients{margin:0.5rem 0 1rem;padding-left:1rem}
+    .app-meals .calories{margin-top:0.4rem;color:#d0eedf;font-weight:700}
+    .app-meals .back-btn{padding:0.45rem 0.7rem;border-radius:8px;border:1px solid #9cb6a9;background:white;color:#91ceb1;cursor:pointer}
+
+    .app-meals .articles-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;margin-top:1rem}
+    .app-meals .article-card{background:rgb(153, 202, 107);padding:1rem;border-radius:10px;box-shadow:0 6px 18px rgba(10,10,10,0.05)}
+
+    .app-meals .site-footer{padding:1rem 0;text-align:center;color:#586b58}
+
+    @media (max-width:800px){
+      .app-meals .hero-right .img-wrap{width:48%}
+      .app-meals .card-inner{height:360px}
+    }
+    @media (max-width:520px){
+      .app-meals .hero-grid{flex-direction:column}
+      .app-meals .hero-right .img-wrap{width:100%}
+      .app-meals .card-inner{height:320px}
+    }
+
+    .apps-wrapper { max-width:1200px; margin-inline:auto; padding:18px; }
+    .apps-sep { height:28px; }
+  </style>
+</head>
+
+<body>
+
+  <div class="global-nav" aria-label="الشريط العلوي">
+    <nav class="navbar" role="navigation" aria-label="روابط الموقع">
+      <div class="nav-left" style="display:flex;align-items:center;gap:12px;">
+        <a href="login.html" aria-label="انشاء حساب">انشاء حساب</a>
+      </div>
+      <div class="nav-right" style="display:flex;align-items:center;gap:12px;">
+    
+      </div>
+    </nav>
+  </div>
+ <!-- App 2: Meals & articles -->
+    <section class="app-meals" aria-label="تطبيق الوجبات والمقالات">
+      <main>
+        <section class="hero">
+          <div class="container hero-grid" style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;">
+            <div class="hero-left" style="flex:1 1 320px;">
+              <h2>نصائح غذائية ومقالات مختارة</h2>
+              <p>اكتشف فوائد العناصر الغذائية، وتعرّف على مكونات بعض الوجبات وسعراتها.</p>
+              <a class="cta" href="#meals">عرض بعض الوجبات</a>
+            </div>
+            <!-- optional hero-right placeholder -->
+          </div>
+        </section>
+
+  <div class="apps-wrapper">
+
+    <!-- App 1: Nutrition cards -->
+    <section class="app-nutrients" aria-label="تطبيق العناصر الغذائية">
+      <header class="site-header">
+        <p class="lead">تعرف على أهم العناصر الغذائية </p>
+      </header>
+
+      <main class="container">
+        <section class="cards" aria-label="قائمة البطاقات الغذائية">
+          <!-- بطاقة: البروتينات -->
+          <article class="card" tabindex="0"
+                   data-nutrient="protein"
+                   data-title="البروتينات"
+                   data-examples="لحم، دجاج، سمك، بيض، لبن، عدس"
+                   data-detail="بناء وإصلاح الأنسجة، إنتاج الإنزيمات والهرمونات، ودعم الجهاز المناعي. مصادر جيدة: الأسماك، البقوليات، مشتقات الحليب.">
+            <div class="card-inner">
+              <div class="card-media">
+                <img src="protein.jpg" alt="لحوم، بيض، بقوليات" loading="lazy">
+              </div>
+              <div class="card-body">
+                <h2 class="card-title">البروتينات</h2>
+                <p class="examples">أمثلة: لحم، دجاج، سمك، بيض، لبن، عدس</p>
+                <button class="open-details" aria-haspopup="dialog">عرض الوظيفة</button>
+              </div>
+            </div>
+          </article>
+
+          <!-- بطاقة: الكربوهيدرات -->
+          <article class="card" tabindex="0"
+                   data-nutrient="carbs"
+                   data-title="الكربوهيدرات"
+                   data-examples="خبز كامل، أرز، بطاطا، شوفان، فواكه"
+                   data-detail="المصدر الرئيسي للطاقة في الجسم، يساعد الدماغ والعضلات على العمل. اختر الحبوب الكاملة والمصادر الغنية بالألياف.">
+            <div class="card-inner">
+              <div class="card-media">
+                <img src="carp.jpg" alt="خبز، أرز، بطاطا" loading="lazy">
+              </div>
+              <div class="card-body">
+                <h2 class="card-title">الكربوهيدرات</h2>
+                <p class="examples">أمثلة: خبز كامل، أرز، بطاطا، شوفان، فواكه</p>
+                <button class="open-details" aria-haspopup="dialog">عرض الوظيفة</button>
+              </div>
+            </div>
+          </article>
+
+          <!-- بطاقة: الدهون -->
+          <article class="card" tabindex="0"
+                   data-nutrient="fats"
+                   data-title="الدهون"
+                   data-examples="زيت الزيتون، أفوكادو، مكسرات، سمك زيتي"
+                   data-detail="تخزين الطاقة، دعم امتصاص الفيتامينات، حماية الأعضاء وعزل الجسم حرارياً. أفضل: دهون غير مشبعة كزيت الزيتون والأسماك.">
+            <div class="card-inner">
+              <div class="card-media">
+                <img src="oil.jpg" alt="زيوت، أفوكادو، مكسرات" loading="lazy">
+              </div>
+              <div class="card-body">
+                <h2 class="card-title">الدهون</h2>
+                <p class="examples">أمثلة: زيت الزيتون، أفوكادو، مكسرات، سمك زيتي</p>
+                <button class="open-details" aria-haspopup="dialog">عرض الوظيفة</button>
+              </div>
+            </div>
+          </article>
+
+          <!-- بطاقة: الفيتامينات -->
+          <article class="card" tabindex="0"
+                   data-nutrient="vitamins"
+                   data-title="الفيتامينات"
+                   data-examples="فيتامين A، C، D، مجموعة B — من خضار وفواكه"
+                   data-detail="تنظيم العمليات الحيوية، تقوية المناعة، دعم نمو الأنسجة وصحة الجلد. تنوع الأطعمة يضمن الحصول على جميع الفيتامينات.">
+            <div class="card-inner">
+              <div class="card-media">
+                <img src="vitamin.jpg" alt="خضار وفواكه" loading="lazy">
+              </div>
+              <div class="card-body">
+                <h2 class="card-title">الفيتامينات</h2>
+                <p class="examples">أمثلة: فيتامين A، C، D، مجموعة B — من خضار وفواكه</p>
+                <button class="open-details" aria-haspopup="dialog">عرض الوظيفة</button>
+              </div>
+            </div>
+          </article>
+
+          <!-- بطاقة: المعادن -->
+          <article class="card" tabindex="0"
+                   data-nutrient="minerals"
+                   data-title="المعادن"
+                   data-examples="كالسيوم، حديد، مغنيسيوم — حليب، سبانخ، لحوم"
+                   data-detail="دعم صحة العظام، نقل الأكسجين، وظائف الأعصاب والعضلات. احرص على مصادر متنوعة للحصول على معادن كافية.">
+            <div class="card-inner">
+              <div class="card-media">
+                <img src="zn.jpg" alt="مأكولات غنية بالمعادن" loading="lazy">
+              </div>
+              <div class="card-body">
+                <h2 class="card-title">المعادن</h2>
+                <p class="examples">أمثلة: كالسيوم، حديد، مغنيسيوم — حليب، سبانخ، لحوم</p>
+                <button class="open-details" aria-haspopup="dialog">عرض الوظيفة</button>
+              </div>
+            </div>
+          </article>
+        </section>
+      </main>
+
+      <!-- Modal (مخفي مبدئياً) -->
+      <div class="modal-backdrop" id="modal-backdrop" hidden></div>
+
+      <div class="modal" id="detail-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" aria-describedby="modal-desc" hidden>
+        <div class="modal-panel" role="document">
+          <button class="modal-close" aria-label="إغلاق النافذة">&times;</button>
+
+          <div class="modal-media">
+            <img src="" alt="" id="modal-img" loading="lazy">
+          </div>
+
+          <div class="modal-content">
+            <h2 id="modal-title">العنوان</h2>
+            <p class="modal-examples" id="modal-examples"></p>
+            <div id="modal-desc" class="modal-desc">نص الوظيفة هنا...</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="apps-sep" aria-hidden="true"></div>
+
+   
+        <!-- Meals grid -->
+        <section id="meals" class="meals container" style="padding:18px 12px;">
+          <h2 class="section-title">بعض الوجبات التي يمكن ان تفيد نظامك الغذائي</h2>
+          <p class="section-sub">انقر على التفاصيل  لمشاهدة مكونات الوجبة وسعراتها</p>
+
+          <div class="grid">
+            <!-- Card 1 -->
+            <article class="card" tabindex="0">
+              <div class="card-inner">
+                <div class="card-front">
+                  <img src="salad.jpg" alt="سلطة الدجاج المشوي">
+                  <div class="card-body">
+                    <h3>سلطة الدجاج المشوي</h3>
+                    <p>سلطة  خفيفة صحية متوازنة غنية بالبروتينات والخضروات</p>
+                    <button class="details-btn">تفاصيل</button>
+                  </div>
+                </div>
+
+                <div class="card-back">
+                  <div class="card-body">
+                    <h3>مكونات</h3>
+                    <ul class="ingredients">
+                      <li>دجاج مشوي,خس,طماطم</li>
+                      <li>خيار,زيت زيتون</li>
+                      <li> ليمون</li>
+                    </ul>
+                    <p class="calories"><strong>السعرات:</strong> 350 سعر حراري</p>
+                    <button class="back-btn">رجوع</button>
+                  </div>
+                </div>
+              </div>
+            </article>
+
+            <!-- Card 2 -->
+            <article class="card" tabindex="0">
+              <div class="card-inner">
+                <div class="card-front">
+                  <img src="avocado.jpg" alt="افوكادو">
+                  <div class="card-body">
+                    <h3>التوست بالأفوكادو</h3>
+                    <p>وجبة فطور أو سناك صحية</p>
+                    <button class="details-btn">تفاصيل</button>
+                  </div>
+                </div>
+
+                <div class="card-back">
+                  <div class="card-body">
+                    <h3>مكونات</h3>
+                    <ul class="ingredients">
+                      <li>خبز أسمر,أفوكادو مهروس</li>
+                      <li>ليمون</li>
+                    </ul>
+                    <p class="calories"><strong>السعرات:</strong>280 سعر حراري</p>
+                    <button class="back-btn">رجوع</button>
+                  </div>
+                </div>
+              </div>
+            </article>
+
+            <!-- Card 3 -->
+            <article class="card" tabindex="0">
+              <div class="card-inner">
+                <div class="card-front">
+                  <img src="seafood.jpg" alt="سمك مشوي">
+                  <div class="card-body">
+                    <h3>سمك مشوي مع خضار</h3>
+                    <p>وجبة غنية بالأوميغا-3 والبروتين قليل الدهون.</p>
+                    <button class="details-btn">تفاصيل</button>
+                  </div>
+                </div>
+
+                <div class="card-back">
+                  <div class="card-body">
+                    <h3>مكونات</h3>
+                    <ul class="ingredients">
+                      <li>سمك فيليه، بروكلي، جزر</li>
+                      <li>ليمون، أعشاب</li>
+                    </ul>
+                    <p class="calories"><strong>السعرات:</strong> 420 سعر حراري</p>
+                    <button class="back-btn">رجوع</button>
+                  </div>
+                </div>
+              </div>
+            </article>
+
+            <!-- Card 4 -->
+            <article class="card" tabindex="0">
+              <div class="card-inner">
+                <div class="card-front">
+                  <img src="smothe.jpg" alt="سموذي">
+                  <div class="card-body">
+                    <h3>سموذي</h3>
+                    <p>مشروب بارد وكثيف القوام يحضر بخلط الفواكه</p>
+                    <button class="details-btn">تفاصيل</button>
+                  </div>
+                </div>
+
+                <div class="card-back">
+                  <div class="card-body">
+                    <h3>مكونات</h3>
+                    <ul class="ingredients">
+                      <li>موز,حليب قليل الدسم</li>
+                      <li>شوفان</li>
+                    </ul>
+                    <p class="calories"><strong>السعرات:</strong> 250 سعر حراري</p>
+                    <button class="back-btn">رجوع</button>
+                  </div>
+                </div>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <!-- Small articles section -->
+        <section class="articles container" style="padding:18px 12px;">
+          <h2 class="section-title">مقالات سريعة</h2>
+          <div class="articles-grid">
+            <article class="article-card">
+              <h4>أهمية البروتين</h4>
+              <p>البروتين ضروري لبناء العضلات وإصلاح الأنسجة. جرّب مصادر نباتية وحيوانية متنوعة.</p>
+            </article>
+            <article class="article-card">
+              <h4>دور الألياف</h4>
+              <p>الألياف تحسّن الهضم وتمنح شعوراً بالشبع، متوفرة في الخضار والحبوب الكاملة.</p>
+            </article>
+            <article class="article-card">
+              <h4>الدهون الصحية</h4>
+              <p>الدهون غير المشبعة مهمة لصحة الدماغ والقلب، أمثلة: زيت الزيتون، الأفوكادو، المكسرات.</p>
+            </article>
+          </div>
+        </section>
+      </main>
+    </section>
+  </div>
+
+  <!-- Global footer (scoped) -->
+  <footer class="global-footer" role="contentinfo">
+   © 2025 التغذية الصحية — جميع الحقوق محفوظة</footer>
+  <!-- ======= Scoped scripts ======= -->
+  <script>
+    /* App 1 script (scoped inside an IIFE) */
+    (function(){
+      document.addEventListener('DOMContentLoaded', () => {
+        const root = document.querySelector('.app-nutrients');
+        if (!root) return;
+
+        const cards = Array.from(root.querySelectorAll('.card'));
+        const modal = root.querySelector('#detail-modal');
+        const backdrop = root.querySelector('#modal-backdrop');
+
+        const modalImg = root.querySelector('#modal-img');
+        const modalTitle = root.querySelector('#modal-title');
+        const modalExamples = root.querySelector('#modal-examples');
+        const modalDesc = root.querySelector('#modal-desc');
+        const modalCloseBtn = root.querySelector('.modal-close');
+        const primaryAction = root.querySelector('#modal-action-primary');
+        const secondaryAction = root.querySelector('#modal-action-secondary');
+
+        let lastFocusedElement = null;
+
+        const io = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) entry.target.classList.add('revealed');
+          });
+        }, { threshold: 0.12 });
+
+        cards.forEach(card => io.observe(card));
+
+        const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        cards.forEach(card => {
+          const inner = card.querySelector('.card-inner');
+          if (!reducedMotion) {
+            card.addEventListener('mousemove', (ev) => {
+              const rect = card.getBoundingClientRect();
+              const x = (ev.clientX - rect.left) / rect.width;
+              const y = (ev.clientY - rect.top) / rect.height;
+              const rotY = (x - 0.5) * -6;
+              const rotX = (y - 0.5) * 6;
+              inner.style.transform = `perspective(1200px) rotateX(${rotX}deg) rotateY(${rotY}deg) translateZ(6px)`;
+            });
+
+            card.addEventListener('mouseleave', () => { inner.style.transform = ''; });
+          }
+
+          const openButtons = Array.from(card.querySelectorAll('.open-details'));
+          const openHandler = (e) => {
+            e.stopPropagation();
+            openModalFromCard(card);
+          };
+          openButtons.forEach(b => b.addEventListener('click', openHandler));
+
+          card.addEventListener('click', (e) => {
+            const tag = e.target.tagName.toLowerCase();
+            if (tag === 'a' || (tag === 'button' && e.target.classList.contains('open-details'))) return;
+            openModalFromCard(card);
+          });
+
+          card.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              openModalFromCard(card);
+            }
+          });
+        });
+
+        function openModalFromCard(card) {
+          lastFocusedElement = document.activeElement;
+
+          const img = card.querySelector('.card-media img');
+          const title = card.dataset.title || card.querySelector('.card-title')?.textContent || '';
+          const examples = card.dataset.examples || '';
+          const detail = card.dataset.detail || '';
+
+          if (img && img.src) {
+            modalImg.src = img.src;
+            modalImg.alt = img.alt || title;
+            modalImg.style.display = '';
+          } else {
+            modalImg.style.display = 'none';
+          }
+          modalTitle.textContent = title;
+          modalExamples.textContent = `أمثلة: ${examples}`;
+          modalDesc.textContent = detail;
+
+          showModal();
+        }
+
+        function showModal() {
+          modal.hidden = false;
+          backdrop.hidden = false;
+
+          requestAnimationFrame(() => {
+            modal.classList.add('open');
+            backdrop.classList.add('open');
+          });
+
+          trapFocus(modal);
+
+          const focusable = getFocusableElements(modal);
+          if (focusable.length) focusable[0].focus();
+          else modalCloseBtn.focus();
+
+          document.addEventListener('keydown', handleKeydownWhileModal);
+        }
+
+        function hideModal() {
+          modal.classList.remove('open');
+          backdrop.classList.remove('open');
+
+          const finish = () => {
+            modal.hidden = true;
+            backdrop.hidden = true;
+            document.removeEventListener('keydown', handleKeydownWhileModal);
+            if (lastFocusedElement && typeof lastFocusedElement.focus === 'function') lastFocusedElement.focus();
+          };
+
+          if (reducedMotion) finish();
+          else setTimeout(finish, 260);
+        }
+
+        backdrop.addEventListener('click', hideModal);
+        modalCloseBtn.addEventListener('click', hideModal);
+
+    
+
+        function handleKeydownWhileModal(e) {
+          if (e.key === 'Escape') {
+            e.preventDefault();
+            hideModal();
+          }
+        }
+
+        function trapFocus(container) {
+          const focusable = getFocusableElements(container);
+          if (focusable.length === 0) return;
+
+          function handleTab(e) {
+            if (e.key !== 'Tab') return;
+            const first = focusable[0];
+            const last = focusable[focusable.length - 1];
+            if (e.shiftKey) {
+              if (document.activeElement === first) {
+                e.preventDefault();
+                last.focus();
+              }
+            } else {
+              if (document.activeElement === last) {
+                e.preventDefault();
+                first.focus();
+              }
+            }
+          }
+
+          container.addEventListener('keydown', handleTab);
+
+          const observer = new MutationObserver(() => {
+            if (container.hidden) {
+              container.removeEventListener('keydown', handleTab);
+              observer.disconnect();
+            }
+          });
+          observer.observe(container, { attributes: true, attributeFilter: ['hidden'] });
+        }
+
+        function getFocusableElements(root = document) {
+          const selector = [
+            'a[href]:not([tabindex="-1"])',
+            'area[href]',
+            'input:not([disabled]):not([tabindex="-1"])',
+            'select:not([disabled]):not([tabindex="-1"])',
+            'textarea:not([disabled]):not([tabindex="-1"])',
+            'button:not([disabled]):not([tabindex="-1"])',
+            'iframe',
+            'object',
+            'embed',
+            '[contenteditable]',
+            '[tabindex]:not([tabindex="-1"])'
+          ].join(',');
+          return Array.from(root.querySelectorAll(selector)).filter(el => isVisible(el));
+        }
+
+        function isVisible(element) {
+          return !!(element.offsetWidth || element.offsetHeight || element.getClientRects().length);
+        }
+
+        document.addEventListener('click', (e) => {
+          if (!e.target.closest('.app-nutrients .card') && !e.target.closest('.app-nutrients .modal')) {
+            if (!modal.hidden) hideModal();
+          }
+        });
+
+        window.addEventListener('beforeunload', () => {
+          document.removeEventListener('keydown', handleKeydownWhileModal);
+        });
+      });
+    })();
+  </script>
+
+  <script>
+    /* App 2 script (scoped inside an IIFE) */
+    (function(){
+      document.addEventListener('DOMContentLoaded', () => {
+        const root = document.querySelector('.app-meals');
+        if (!root) return;
+
+        // Parallax placeholders (if elements with data-parallax exist inside app)
+        const parallaxEls = root.querySelectorAll('[data-parallax]');
+        root.querySelector('.hero-right')?.addEventListener('mousemove', (e) => {
+          const rect = e.currentTarget.getBoundingClientRect();
+          const cx = rect.left + rect.width / 2;
+          const cy = rect.top + rect.height / 2;
+          const dx = (e.clientX - cx) / rect.width;
+          const dy = (e.clientY - cy) / rect.height;
+
+          parallaxEls.forEach(el => {
+            const intensity = Number(el.dataset.parallax) || 6;
+            const img = el.querySelector('.parallax-img');
+            const tx = dx * intensity;
+            const ty = dy * intensity;
+            el.style.transform = `translate(${tx}px, ${ty}px) rotate(${tx * 0.05}deg)`;
+            if (img) img.style.transform = `scale(${1 + Math.abs(tx) * 0.02})`;
+          });
+        });
+
+        const cards = Array.from(root.querySelectorAll('.card'));
+        const io = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if(entry.isIntersecting){
+              entry.target.style.transition = 'transform 600ms cubic-bezier(.2,.9,.3,1), opacity 600ms';
+              entry.target.style.transform = 'translateY(0)';
+              entry.target.style.opacity = 1;
+              io.unobserve(entry.target);
+            }
+          });
+        }, {threshold: 0.12});
+
+        cards.forEach(card => {
+          // initialize offscreen for animation
+          card.style.transform = 'translateY(18px)';
+          card.style.opacity = 0;
+          io.observe(card);
+
+          function flipCard(card, flip = true){
+            if(flip) card.classList.add('is-flipped');
+            else card.classList.remove('is-flipped');
+          }
+
+          card.addEventListener('click', (e) => {
+            if(e.target.matches('.back-btn')){
+              flipCard(card, false);
+              return;
+            }
+            const isFlipped = card.classList.contains('is-flipped');
+            flipCard(card, !isFlipped);
+          });
+
+          card.addEventListener('keydown', (e) => {
+            if(e.key === 'Enter' || e.key === ' '){
+              e.preventDefault();
+              const isFlipped = card.classList.contains('is-flipped');
+              flipCard(card, !isFlipped);
+            } else if(e.key === 'Escape'){
+              card.classList.remove('is-flipped');
+            }
+          });
+        });
+
+        // Smooth scrolling for in-page anchors (works across the merged page)
+        document.querySelectorAll('a[href^="#"]').forEach(a => {
+          a.addEventListener('click', (e) => {
+            const href = a.getAttribute('href');
+            if(href.length > 1){
+              e.preventDefault();
+              const target = document.querySelector(href);
+              if(target) target.scrollIntoView({behavior:'smooth', block:'start'});
+            }
+          });
+        });
+      });
+    })();
+  </script>
+</body>
+</html>

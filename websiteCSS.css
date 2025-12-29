@@ -1,0 +1,350 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+/* ===== Top Bar ===== */
+.top-bar {
+  background: #a1bd62;
+  color: rgb(0, 0, 0);
+  padding: 10px 8%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+ footer {
+        background:  #6b8e23;
+        color: white;
+        text-align: center;
+        padding: 15px;
+        margin-top: 40px;
+        font-size: 14px;
+    }
+.btn {
+  display: inline-block;
+  background: #6b8e23;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 8px;
+  text-decoration: none;
+  margin: 15px 0 25px;
+}
+
+.btn:hover {
+  background: #4e6e1f;
+}
+.book-btn {
+  background: #2f4f1a;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* ===== Navbar ===== */
+
+ ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: #6b8e23;
+}
+
+li {
+  float: right;
+}
+
+li a {
+  display: block;
+  color: white;
+  text-align: center;
+  padding: 10px;
+  text-decoration: none;
+}
+.navbar ul {
+  display: flex;
+  list-style: none;
+  gap: 20px;
+}
+/* ===== بعد التمرير ف القائمه متع الرئيسيه ===== */
+li a:hover {
+  background-color: #225203;
+}
+
+/* ===== Hero ===== */
+.hero {
+  height: 70vh;
+  background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)),
+   url("fooood.jpg") center/cover;
+  display: flex;
+  align-items: center;
+  padding: 0 8%;
+  color: white;
+}
+
+.hero-text {
+  max-width: 500px;
+}
+/* ===== الزر الي فوق الكلام في الصوره ===== */
+.badge {
+  background: #6b8e23;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 14px;
+}
+
+.hero h1 {
+  margin: 20px 0;
+  font-size: 40px;
+}
+/* ===== الخط الي ع الصوره ===== */
+.hero h1 span {
+  color: #f4c430;
+}
+
+.hero-btn {
+/* =====الزر الي تحت الكلام في الصوره===== */
+  background: #6b8e23;
+  border: none;
+  padding: 12px 25px;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+/* ===== Services ===== */
+.services {
+  padding: 60px 8%;
+  text-align: center;
+}
+
+.services h4 {
+  color: #e6d85d;
+}
+
+.cards {
+  margin-top: 40px;
+  display: flex;
+  justify-content: center;
+  gap: 25px;
+}
+
+.card {
+  background: #9fb93e;
+  width: 280px;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0,15);
+  overflow: hidden;
+  transition: 0.3s;
+  COLOR: #2e2e2e;
+}
+/* ===== بعد التمرير ع البطاقه===== */
+.card:hover {
+  transform: translateY(-10px);
+  background: #dbd80e;
+}
+
+.card img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+}
+
+.card h3 {
+  color : #2b2b2b;
+}
+
+.card p {
+  color: #3a3a3a;
+  font-size: 14px;
+}
+/* ===== الزر الي ف البطاقه ===== */
+.card button,
+.card .btn {
+  margin: 15px 0 25px;
+  background: #385c09;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+/*زر التقييم بالنجوم*/
+/* استبدال قاعدة .container القديمة */
+.container {
+  /* أزل min-height:100vh وركز المحاذاة للأعلى */
+  display: flex;
+  justify-content: center;
+  align-items: flex-start; /* يحاذي المحتوى لأعلى بدل الوسط */
+  padding: 20px 8%;         /* مسافة داخلية مناسبة */
+  margin: 12px auto;        /* مسافة بسيطة بين الأقسام */
+}
+.rating-box {
+  background:#c8ec99;
+
+  width: 320px;
+  padding: 30px;
+  border-radius: 20px;
+  text-align: center;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+}
+
+.rating-box h2 {
+  margin-bottom: 10px;
+  color: #56614d;
+}
+
+.rating-box p {
+  color: #588b2e;
+  font-size: 14px;
+}
+
+.stars {
+  margin: 20px 0;
+}
+
+.star {
+  font-size: 35px;
+  color: #71722c;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.star.active {
+  color: gold;
+}
+button {
+  background: #719734;
+  color: rgb(255, 255, 255);
+  border: none;
+  padding: 10px 25px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 15px;
+}
+
+button:hover {
+  background: #b3be4b;
+}
+
+#message {
+  margin-top: 15px;
+  font-size: 14px;}
+.articles-box-component { 
+  max-width: 1100px;
+  margin: 24px auto;
+  font-family: Arial, sans-serif;
+  color: #11210f;
+}
+
+.articles-inner {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+/* عمود العنوان */
+.abc-left {
+  flex: 0 0 34%;
+  padding: 18px;
+}
+.abc-badge {
+  display: inline-block;
+  background: #e7f1dc;
+  color: #2f4f1a;
+  padding: 6px 10px;
+  border-radius: 10px;
+  font-size: 13px;
+}
+.abc-title {
+  margin: 12px 0;
+  font-size: 24px;
+  color: #11210f;
+}
+.abc-lead {
+  color: #4a6b3e;
+  line-height: 1.6;
+  font-size: 14px;
+}
+
+.abc-right {
+  flex: 1;
+  background: #0e1613; 
+  padding: 14px;
+  border-radius: 8px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+}
+
+/* متع القوائم */
+.abc-accordion { display: flex; flex-direction: column; gap: 10px; }
+
+.abc-item {
+  background: rgba(255,255,255,0.02);
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.03);
+}
+
+/* زر الرأس */
+.accordion-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 12px;
+  background: transparent;
+  color: #e8efe6;
+  border: none;
+  cursor: pointer;
+  text-align: right;
+  font-size: 15px;
+}
+
+/* الرقم */
+.accordion-btn .num {
+  min-width: 36px;
+  text-align: center;
+  color: #9fbf7a;
+  font-weight: 700;
+}
+
+/* عنوان */
+.accordion-btn .title { flex: 1; color: #e8efe6; }
+
+/* سهم */
+.accordion-btn .chev { color: #bfcfc0; transition: transform 0.2s; }
+
+/* عند الفتح */
+.abc-item.open .chev { transform: rotate(90deg); }
+
+/* المحتوى المخفي */
+.accordion-panel {
+  padding: 12px 14px 16px 14px;
+  color: #cbd8c1;
+  line-height: 1.6;
+  font-size: 14px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.01), transparent);
+}
+
+/* زر المزيد */
+.abc-more {
+  display: inline-block;
+  margin-top: 14px;
+  background: #2f5a1a;
+  color: white;
+  padding: 8px 14px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+/* تجاوب */
+@media (max-width: 900px) {
+  .articles-inner { flex-direction: column-reverse; }
+  .abc-left { width: 100%; padding: 12px 8px; }
+  .abc-right { width: 100%; padding: 12px; }
+}

@@ -1,0 +1,354 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+     <link rel="icon" type="image/x-icon" href="avocado.jpg">
+  <title>تسجيل الدخول</title>
+
+  <!-- خط عربي بسيط -->
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --green-900: #042c21;
+      --green-800: #9ce283;
+      --green-700: #608f4f;
+      --green-600: #4a6b3e;
+      --green-500:  #4a6b3e;
+      --card-bg: #c0ee95;
+      --muted: #9aa3a0;
+      --danger: #e74c3c;
+      --success: #10b981;
+      --glass: rgba(255,255,255,0.85);
+      --shadow: 0 10px 30px rgba(6,78,59,0.08);
+    }
+
+    /* عام */
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:"Cairo", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background: linear-gradient(180deg, rgba(20,83,45,0.06), rgba(16,185,129,0.02));
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:32px;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+
+    /* البطاقة */
+    .card{
+      width: 920px;
+      max-width: 96%;
+      background: linear-gradient(90deg, var(--card-bg) 55%, transparent 55%);
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+      display:flex;
+      overflow:hidden;
+      direction:rtl;
+      align-items:stretch;
+      min-height: 520px;
+    }
+
+    .panel-right{
+      flex: 0 0 45%;
+      background: linear-gradient(135deg, var(--green-800), var(--green-600));
+      color: #fff;
+      padding:48px 36px;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      position:relative;
+      border-top-right-radius: 36px;
+      border-bottom-right-radius: 36px;
+      clip-path: polygon(0 0, 100% 0, 100% 100%, 12% 100%, 0 50%);
+    }
+
+    .panel-right .content{ transform: translateX(-12px); }
+
+    .greeting{ font-size: 28px; font-weight:700; margin: 6px 0 18px; text-shadow: 0 6px 18px rgba(2,6,6,0.12); }
+    .greeting small{ display:block; font-weight:400; opacity:0.9; color: rgba(255,255,255,0.95); }
+
+    .panel-right .cta{ margin-top:28px; }
+    .ghost-btn{
+      display:inline-block; padding:10px 20px; color:#e6fffb;
+      border:1px solid rgba(255,255,255,0.28); border-radius:10px; background:transparent;
+      cursor:pointer; transition:all .25s ease; font-weight:600;
+    }
+    .ghost-btn:hover{ transform:translateY(-3px); box-shadow: 0 8px 18px rgba(0,0,0,0.08); }
+
+    /* الجانب الأيسر (نموذج الدخول) */
+    .panel-left{
+      flex:1; padding:44px 44px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(250,250,250,0.98));
+      display:flex; flex-direction:column; justify-content:center; gap:8px;
+    }
+
+    .title{ font-size:28px; font-weight:700; margin-bottom:14px; color:var(--green-900); }
+
+    /* SOCIALS: تخصيص الأزرار والأيقونات */
+    .socials{
+      display:flex; gap:10px; margin-bottom:12px; justify-content:flex-end;
+    }
+    .socials button{
+      height:42px; width:42px; border-radius:10px; border:1px solid #e6eef0;
+      background:#fff; cursor:pointer; display:inline-flex; align-items:center;
+      justify-content:center; box-shadow: 0 2px 6px rgba(2,6,6,0.03);
+      padding:6px; line-height:0;
+    }
+    .socials button svg{ width:20px; height:20px; display:block; }
+    .socials button:focus{ outline:2px solid rgb(18, 112, 50); outline-offset:2px; }
+
+    .or{ color:var(--muted); font-size:13px; margin:10px 0 18px; text-align:right; }
+
+    form{display:flex; flex-direction:column; gap:14px; max-width:420px}
+
+    .field{ position:relative; }
+    input[type="text"], input[type="email"], input[type="password"]{
+      width:100%; padding:14px 44px 14px 14px; font-size:15px; border-radius:8px; border:1px solid #ececec;
+      background:transparent; outline:none; transition: box-shadow .18s ease, border-color .18s ease;
+      color:var(--green-900); caret-color:var(--green-700);
+    }
+
+    .field label{
+      position:absolute; right:14px; top:50%; transform:translateY(-50%);
+      pointer-events:none; color:var(--muted); transition: transform .18s ease, font-size .18s ease, top .18s ease;
+      background:transparent; padding:0 6px; font-size:14px;
+    }
+
+    .field input:focus { box-shadow: 0 6px 18px rgba(16,185,129,0.06); border-color: var(--green-500); }
+    .field input:focus + label, .field.filled label{
+      transform: translateY(-140%); font-size:12px; color:var(--green-800); top:12%;
+    }
+
+    .field .underline{
+      position:absolute; left:0; right:0; bottom:6px; height:2px;
+      background:linear-gradient(90deg,var(--green-700),var(--green-500));
+      transform:scaleX(0); transform-origin: right; transition: transform .28s cubic-bezier(.2,.9,.3,1);
+      border-radius:2px;
+    }
+    .field input:focus ~ .underline, .field.filled .underline{ transform:scaleX(1); transform-origin: left; }
+
+    .eye{
+      position:absolute; left:8px; top:50%; transform:translateY(-50%); height:36px; width:36px; border-radius:8px;
+      border:none; background:transparent; cursor:pointer; display:inline-flex; align-items:center; justify-content:center;
+      color:var(--muted);
+    }
+    .eye:active{ transform:translateY(-50%) scale(.98); }
+
+    .error{ color:var(--danger); font-size:13px; margin-top:4px; display:none; }
+    .error.show{ display:block; animation:fadeIn .22s ease; }
+
+    @keyframes fadeIn { from{opacity:0; transform: translateY(-6px)} to{opacity:1; transform:none} }
+
+    .btn{
+      margin-top:6px; padding:12px 18px; border-radius:10px; border:1px solid var(--green-700);
+      background: linear-gradient(90deg,var(--green-700),var(--green-600)); color:#fff; font-weight:700;
+      cursor:pointer; width:160px; display:inline-flex; align-items:center; justify-content:center; gap:8px;
+      transition: all .28s cubic-bezier(.2,.9,.3,1); box-shadow: 0 10px 22px rgba(6,78,59,0.08);
+    }
+    .btn:active{ transform:translateY(1px) }
+
+    .btn.loading{ width:48px; border-radius:50%; padding:12px; position:relative; }
+    .btn .text{ display:inline-block; transition:opacity .12s ease; }
+    .btn.loading .text{ opacity:0; pointer-events:none; }
+
+    .spinner{ width:18px; height:18px; border-radius:50%; border:2px solid rgba(255,255,255,0.22); border-top-color:#fff; animation:spin 1s linear infinite; display:none; }
+    .btn.loading .spinner{ display:block; }
+
+    @keyframes spin { to{ transform:rotate(360deg)} }
+
+    .btn.success{ background:var(--success); border-color:transparent; box-shadow: 0 10px 20px rgba(16,185,129,0.18); }
+    .check{ width:18px; height:18px; display:none; color:white; font-weight:700; }
+    .btn.success .check{ display:block } .btn.success .spinner{ display:none }
+
+    @keyframes shake{ 0%{ transform:translateX(0) } 20%{ transform:translateX(-8px) } 40%{ transform:translateX(8px) } 60%{ transform:translateX(-6px) } 80%{ transform:translateX(6px) } 100%{ transform:translateX(0) } }
+    .shake{ animation: shake .46s cubic-bezier(.36,.07,.19,.97); }
+
+    @media (max-width:900px){
+      .card{ flex-direction:column-reverse; min-height:640px }
+      .panel-right{ order:1; flex-basis:40%; border-radius:20px 20px 0 0; clip-path:none; padding:28px }
+      .panel-left{ order:2; padding:28px; }
+    }
+
+    @media (prefers-reduced-motion: reduce){ *{ transition:none !important; animation:none !important; } }
+  </style>
+</head>
+<body>
+
+  <div class="card" role="region" aria-label="بطاقة تسجيل الدخول">
+    <aside class="panel-right" aria-hidden="false">
+      <div class="content">
+        <div class="greeting">مرحباً بك!</div>
+        <small>سجّل للحصول على حسابك لاستخدام كل مميزات الموقع.</small>
+      </div>
+    </aside>
+
+    <main class="panel-left" role="main" aria-labelledby="signinTitle">
+      <h2 id="signinTitle" class="title">تسجيل الدخول</h2>
+
+      <div class="socials" aria-hidden="false">
+        <!-- Google SVG -->
+        <button title="Google" aria-label="تسجيل عبر جوجل" type="button">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path fill="#EA4335" d="M12 10.2v3.6h5.2c-.22 1.2-.9 2.22-1.92 2.92l3 2.32C20.65 18 22 15.5 22 12c0-.77-.08-1.52-.24-2.24H12z"/>
+            <path fill="#34A853" d="M6.6 13.02A6.98 6.98 0 0 1 6 12c0-.34.04-.68.1-1.02L3.1 8.66A10.98 10.98 0 0 0 2 12c0 1.84.45 3.57 1.24 5.12l3.36-4.1z"/>
+            <path fill="#FBBC05" d="M12 4.4c1.6 0 3.06.55 4.2 1.64l3.12-3.12C17.18 1.06 14.74 0 12 0 7.69 0 3.98 2.24 2 5.66l3.36 4.1C6.7 8.04 9.06 4.4 12 4.4z"/>
+            <path fill="#4285F4" d="M22 12c0-.64-.06-1.26-.18-1.86H12v3.6h5.2c-.24 1.06-1 1.96-2 2.5l3 2.32C21.26 17.42 22 14.9 22 12z"/>
+          </svg>
+        </button>
+
+        <!-- Facebook SVG -->
+        <button title="Facebook" aria-label="تسجيل عبر فيسبوك" type="button">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path fill="#1877F2" d="M22 12.07C22 6.48 17.52 2 12 2S2 6.48 2 12.07c0 4.99 3.66 9.12 8.44 9.95v-7.05H7.9v-2.9h2.54V9.41c0-2.5 1.49-3.88 3.77-3.88 1.09 0 2.23.2 2.23.2v2.45h-1.25c-1.23 0-1.61.77-1.61 1.56v1.88h2.74l-.44 2.9h-2.3V22c4.78-.83 8.44-4.96 8.44-9.93z"/>
+          </svg>
+        </button>
+
+        <!-- LinkedIn SVG -->
+        <button title="LinkedIn" aria-label="تسجيل عبر لينكدإن" type="button">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path fill="#0A66C2" d="M20.45 20.45h-3.55v-5.2c0-1.24-.02-2.83-1.72-2.83-1.72 0-1.98 1.34-1.98 2.73v5.3H9.13V9h3.41v1.56h.05c.47-.9 1.62-1.85 3.34-1.85 3.57 0 4.23 2.35 4.23 5.41v6.8zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.56V9h3.56v11.45z"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="or">أو استخدم البريد وكلمة المرور</div>
+
+      <form id="loginForm" novalidate>
+        <div class="field" id="groupEmail">
+          <input type="email" id="email" autocomplete="username" required placeholder=" " />
+          <label for="email">البريد الإلكتروني</label>
+          <div class="underline" aria-hidden="true"></div>
+        </div>
+
+        <div class="field" id="groupPassword">
+          <input type="password" id="password" autocomplete="current-password" required placeholder=" " />
+          <label for="password">كلمة المرور</label>
+
+          <button type="button" class="eye" id="eyeBtn" aria-label="عرض كلمة المرور (اضغط مطولا)">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M12 5c5 0 9 4 9 7s-4 7-9 7-9-4-9-7 4-7 9-7z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path>
+              <circle cx="12" cy="12" r="2.5" stroke="currentColor" stroke-width="1.6"></circle>
+            </svg>
+          </button>
+
+          <div class="underline" aria-hidden="true"></div>
+        </div>
+
+        <div id="err" class="error" role="alert" aria-live="assertive"></div>
+
+        <button type="submit" class="btn" id="submitBtn" aria-live="polite">
+          <span class="text">تسجيل الدخول</span>
+          <span class="spinner" aria-hidden="true"></span>
+          <span class="check" aria-hidden="true">✓</span>
+        </button>
+
+        <div style="margin-top:6px; font-size:13px; color:var(--muted)">
+          نسيت كلمة المرور؟ <a href="#" style="color:var(--green-700); text-decoration:none">استعادة</a>
+        </div>
+      </form>
+    </main>
+  </div>
+
+  <script>
+    // عناصر
+    const form = document.getElementById('loginForm');
+    const email = document.getElementById('email');
+    const password = document.getElementById('password');
+    // (أيقون) لإظهار/إخفاء كلمة المرور
+    const eyeBtn = document.getElementById('eyeBtn');
+//عنصر لعرض رسائل الخطأ/الإعلام
+    const err = document.getElementById('err');
+    //زر الإرسال
+    const submitBtn = document.getElementById('submitBtn');
+
+    function updateFilled(el){
+      const wrapper = el.parentElement;
+      if (el.value && el.value.trim() !== '') wrapper.classList.add('filled');
+      //تحقق من أن القيمة ليست فارغة ولا تتكون من مسافات فقط.
+      else wrapper.classList.remove('filled');
+    }//يمرّ على الحقلين ويشغّل updateFilled 
+    // مباشرةً (للتعامل مع قيم موجودة مسبقاً
+    [email, password].forEach(i => {
+      updateFilled(i);
+      i.addEventListener('input', ()=> updateFilled(i));
+      i.addEventListener('blur', ()=> updateFilled(i));
+    });
+
+    function revealOn(){ password.type = 'text'; eyeBtn.setAttribute('aria-pressed','true'); }
+    function revealOff(){ password.type = 'password'; eyeBtn.setAttribute('aria-pressed','false'); }
+
+    eyeBtn.addEventListener('pointerdown', (e)=>{ e.preventDefault(); revealOn(); });
+    //عند رفع المؤشر أو مغادرة منطقة الزر أو إلغاء الإشارة (مثلاً بعد التبديل إلى حادثة خارجية) يعيد إخفاء كلمة المرور.
+    ['pointerup','pointerleave','pointercancel'].forEach(ev=> eyeBtn.addEventListener(ev, ()=> revealOff()));
+    eyeBtn.addEventListener('click', (e)=>{
+      //عند النقر العادي يغيّر حالة الإظهار/الإخفاء بالتبديل 
+      if (password.type === 'password') password.type = 'text'; else password.type = 'password';
+    });
+
+    function showError(message){
+      err.textContent = message;
+      err.classList.add('show');
+      form.classList.remove('shake');
+      void form.offsetWidth;
+      form.classList.add('shake');
+      setTimeout(()=> form.classList.remove('shake'), 600);
+    }//يضع رسالة الخطأ داخل العنصر err ويعطيه فئة 'show' لعرضه.
+
+    function clearError(){ err.textContent = ''; err.classList.remove('show'); }
+
+    function validateInputs(){
+      if (!email.value || !email.value.includes('@')) { showError('الرجاء إدخال بريد إلكتروني صالح.'); return false; }
+      if (!password.value || password.value.length < 6) { showError('كلمة المرور يجب أن تكون 6 أحرف على الأقل.'); return false; }
+      return true;
+    }
+
+    form.addEventListener('submit', async (e)=>{
+      e.preventDefault();//منع الإرسال الحقيقي للنموذج (لا يعيد تحميل الصفحة).
+      clearError();//يزيل أي رسالة خطأ سابقة
+      if (!validateInputs()) return;//يتأكد أن المدخلات صحيحة؛ إذا فشل يُخرج
+
+      submitBtn.classList.add('loading');
+      submitBtn.setAttribute('aria-busy','true');
+      //هذا يزيل فئة التحميل ويخفي الدائرة بعد اكتمال العملية.
+      await new Promise(r => setTimeout(r, 1400));
+
+      const success = true;//مثبت لقيمة النجاح؛ في تطبيق حقيقي تُستبدل بنتيجة من الخادم.
+// الانتهاء، يزيل حالة التحميل aria-busy.
+//إذا نجاح:
+
+//يضيف فئة 'success' مؤقتًا
+//، وبعد 800ms يزيلها ويغيّر نص الزر إلى "تمّ تسجيل الدخول".
+ //يعرض رسالة نجاح في err ويغيّر لونها إلى متغير CSS --success.
+//إذا فشل: يستدعي showError برسالة فشل.
+
+
+      submitBtn.classList.remove('loading');
+      submitBtn.setAttribute('aria-busy','false');
+
+      if (success){
+        submitBtn.classList.add('success');
+        
+        setTimeout(()=>{
+          submitBtn.classList.remove('success');
+          submitBtn.querySelector('.text').textContent = 'تمّ تسجيل الدخول';
+        }, 800);
+        err.textContent = 'تمّ تسجيل الدخول بنجاح.';
+        err.classList.add('show');
+        err.style.color = 'var(--success)';
+      } else {
+        showError('حدث خطأ أثناء تسجيل الدخول. حاول مرة أخرى.');
+      }
+    });
+//عند أي إدخال جديد في الحقلين، إذا كانت رسالة الخطأ معروضة فتمسحها فورًا — لتحسين تجربة المستخدم بدون الحاجة لإعادة المحاول
+    [email,password].forEach(i=> i.addEventListener('input', ()=> { if (err.classList.contains('show')) clearError(); }));
+//منع روابط # الافتراضية
+//يمنع السلوك الافتراضي للروابط التي للـ href="#" (حتى لا تعيد الصفحة إلى أعلى أو تغير عنوان URL)
+    document.querySelectorAll('a[href="#"]').forEach(a=>a.addEventListener('click', e=>e.preventDefault()));
+  </script>
+</body>
+</html>

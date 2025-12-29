@@ -1,0 +1,408 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+   <link rel="icon" type="image/x-icon" href="avocado.jpg">
+<title>حساب السعرات الحرارية</title>
+
+<style>
+/* ====== NAVBAR ====== */
+.navbar {
+  background: #6b8e23;
+  padding: 12px 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.navbar a {
+  color: white;
+  text-decoration: none;
+  margin: 0 12px;
+  font-size: 15px;
+}
+.navbar a:hover {
+  background-color: #225203;
+  padding: 5px;
+  border-radius: 5px;
+}
+:root{
+  --bg: #fafcf8;
+  --card:#668052;
+  --primary: #24573b;    /* لون رئيسي - أخضر هادئ */
+  --accent: #FFB86B;     /* لون ثانوي */
+  --muted: #f8fbff;
+  --glass: rgba(139, 57, 46, 0.12);
+  --radius: 12px;
+  --container: 1100px;
+  --shadow: 0 6px 18px rgba(10,10,10,0.06);
+  --font: "Cairo", system-ui, sans-serif;
+}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family:var(--font);
+  background:linear-gradient(180deg,var(--bg),#ffffff);
+  color:#053023;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  line-height:1.45;
+}
+
+/* container الكلام الي ف البطاقه*/
+.container{
+  max-width:var(--container);
+  margin-inline:auto;
+  padding:1rem;
+  color:#020202
+}
+
+/* header / nav */
+.site-header{background:transparent;position:sticky;top:0;z-index:40}
+.nav{display:flex;align-items:center;gap:1rem;justify-content:space-between;padding:.5rem 0}
+.logo{font-weight:700;color:var(--primary);text-decoration:none}
+.nav-toggle{display:none;background:none;border:0;font-size:1.25rem}
+.nav-links{list-style:none;margin:0;padding:0;display:flex;gap:1rem}
+.nav-links a{text-decoration:none;color:var(--muted);padding:.35rem .6rem;border-radius:8px}
+.nav-links a:hover{background:var(--glass);color:var(--primary)}
+
+/* hero */
+.hero{display:flex;gap:1.5rem;align-items:center;padding:2rem 0}
+.headline{font-size:2rem;margin:0 0 .5rem}
+.sub{color:var(--muted);max-width:55ch}
+.hero-ctas{margin-top:1rem;display:flex;gap:.6rem}
+.btn{cursor:pointer;border:0;padding:.6rem .9rem;border-radius:10px;background:var(--card);box-shadow:var(--shadow);transition:transform .15s,box-shadow .15s}
+.btn:hover{transform:translateY(-3px)}
+.btn.primary{background:linear-gradient(90deg,var(--primary),#1f6f47);color:#fff}
+.btn.ghost{background:transparent;border:1px solid rgba(5,48,35,0.08)}
+
+/* cards & tools */
+.card{background:var(--card);border-radius:var(--radius);padding:1rem;box-shadow:var(--shadow)}
+.tools .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin-top:1rem}
+.tool label{display:block;margin-top:.5rem;font-size:.95rem;color:var(--muted)}
+.tool input, .tool select{width:100%;padding:.5rem;margin-top:.25rem;border-radius:8px;border:1px solid #15353f}
+.result{margin-top:.6rem;padding:.5rem;background:#b2eca3;border-radius:8px;color:var(--primary);font-weight:600}
+
+/* bmi bar */
+.bmi-bar{height:10px;background:#f0f5f3;border-radius:999px;margin-top:.6rem;overflow:hidden}
+.bmi-progress{height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--primary));transition:width .8s ease}
+
+/* timer */
+.timer-display{font-size:1.6rem;text-align:center;margin-top:.6rem;background:#f7f8f9;padding:.6rem;border-radius:8px}
+.timer-controls{display:flex;gap:.5rem;justify-content:center;margin-top:.6rem}
+
+/* glasses */
+.glasses{display:flex;gap:.4rem;flex-wrap:wrap;margin-top:.6rem}
+.glass{width:40px;height:40px;border-radius:8px;border:1px dashed #ffffff;background:transparent;cursor:pointer}
+.glass[aria-pressed="true"]{background:linear-gradient(180deg,var(--primary),#afd863);color:rgb(17, 16, 16);border:none;transform:scale(.98)}
+
+/* tips */
+.cards{display:flex;gap:1rem;flex-wrap:wrap;margin-top:1rem}
+.tip{flex:1;min-width:180px}
+
+/* modal */
+.modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(3,10,8,0.35)}
+.modal .modal-content{max-width:520px}
+.modal.show{display:flex}
+.close-modal{position:absolute;right:1rem;top:1rem;background:none;border:0;font-size:1.25rem}
+
+/*  حركة سلسه eveal animations */
+.reveal{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s ease}
+.reveal.in-view{opacity:1;transform:none}
+
+/* responsive */
+@media (max-width:800px){
+  .hero{flex-direction:column;align-items:flex-start}
+  .nav-toggle{display:block}
+  .nav-links{position:absolute;right:1rem;top:60px;background:var(--card);flex-direction:column;padding:.6rem;border-radius:8px;display:none}
+  .nav-links.show{display:flex}
+}
+
+/* small UI polish */
+.stat-card{display:flex;flex-direction:column;align-items:center;gap:.25rem;padding:1.4rem}
+.stat-value{font-size:2rem;color:var(--primary);font-weight:700}
+.section-title{margin:1rem 0 .6rem}
+
+footer {
+  background: #6b8e23;
+  color: white;
+  text-align: center;
+  padding: 15px;
+  font-size: 14px;
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<div class="navbar">
+  <div>
+    <a href="login.html">انشاء حساب </a>
+  </div>
+  <div style="color:white;font-size:17px;"></div>
+</div>
+ <main>
+    <section id="home" class="hero container">
+      <div class="hero-left">
+        <h1 class="headline">صحة أفضل، خطوة بخطوة</h1>
+        <p class="sub">أدوات لحساب الوزن، السعرات، تتبع الماء، ومؤقت للتمارين.</p>
+        <div class="hero-ctas">
+          <a class="btn primary" href="#tools">جرب الأدوات</a>
+          <button class="btn ghost" id="openTips">نصائح سريعة</button>
+        </div>
+      </div>
+      <div class="hero-right">
+        <div class="card stat-card">
+          <div class="stat-value" data-target="75">0</div>
+          <div class="stat-label">٪رضا بدني </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="tools" class="tools container">
+      <h2 class="section-title">الأدوات</h2>
+
+      <div class="grid">
+        <!-- BMI Calculator -->
+        <article class="tool card reveal">
+          <h3>حاسبة مؤشر الكتلة (BMI)</h3>
+          <label>الوزن (كغ)
+            <input type="number" id="bmi-weight" placeholder="مثال: 60">
+          </label>
+          <label>الطول (سم)
+            <input type="number" id="bmi-height" placeholder="مثال: 165">
+          </label>
+          <button class="btn" id="calc-bmi">احسب</button>
+          <div class="result" id="bmi-result" aria-live="polite"></div>
+          <div class="bmi-bar">
+            <div class="bmi-progress" id="bmi-progress"></div>
+          </div>
+        </article>
+
+        <!-- Workout Timer -->
+        <article class="tool card reveal">
+          <h3>مؤقت التمارين</h3>
+          <label>ثواني
+            <input type="number" id="timer-seconds" placeholder="مثال: 30">
+          </label>
+          <div class="timer-display" id="timer-display">00:30</div>
+          <div class="timer-controls">
+            <button class="btn" id="timer-start">ابدأ</button>
+            <button class="btn" id="timer-pause">إيقاف</button>
+            <button class="btn ghost" id="timer-reset">إعادة</button>
+          </div>
+        </article>
+
+        <!-- Water Tracker -->
+        <article class="tool card reveal">
+          <h3>متتبع شرب الماء</h3>
+          <p>اضغط على الكؤوس لملئها — مستهدف 8 أكواب</p>
+          <div class="glasses" id="glasses">
+            <!-- 8 glasses -->
+            <button class="glass" aria-pressed="false">1</button>
+            <button class="glass" aria-pressed="false">2</button>
+            <button class="glass" aria-pressed="false">3</button>
+            <button class="glass" aria-pressed="false">4</button>
+            <button class="glass" aria-pressed="false">5</button>
+            <button class="glass" aria-pressed="false">6</button>
+            <button class="glass" aria-pressed="false">7</button>
+            <button class="glass" aria-pressed="false">8</button>
+          </div>
+          <div class="water-result" id="water-result">0 / 8</div>
+        </article>
+
+      </div>
+    </section>
+
+    <section id="tips" class="tips container">
+      <h2 class="section-title">نصائح للصحة</h2>
+      <div class="cards">
+        <div class="tip card reveal">
+          <h4>تناول متوازن</h4>
+          <p>قسّم وجباتك إلى بروتين، كربوهيدرات معقدة، وخضار في كل وجبة.</p>
+        </div>
+        <div class="tip card reveal">
+          <h4>اشرب ماء كافياً</h4>
+          <p>الهدف 8 أكواب يومياً أو أكثر حسب النشاط.</p>
+        </div>
+        <div class="tip card reveal">
+          <h4>حافظي على النوم</h4>
+          <p>جودة النوم تساعد في استشفاء العضلات وتنظيم الشهية.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+
+  <div id="tips-modal" class="modal" aria-hidden="true">
+    <div class="modal-content card">
+      <button class="close-modal" aria-label="إغلاق">×</button>
+      <h3>نصائح سريعة</h3>
+      <ul>
+        <li>ابدأ بخطوات صغيرة: 15 دقيقة تمارين يومية.</li>
+        <li>قم بتسجيل وجباتك لمدة أسبوع لتعرف عاداتك.</li>
+        <li>قم بإستشارة مختص عند الحاجة.</li>
+      </ul>
+    </div>
+  </div>
+
+<footer>
+© 2025 التغذية الصحية — جميع الحقوق محفوظة</footer>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  // عناصر شائعة
+  const navToggle = document.querySelector('.nav-toggle');
+  const navLinks = document.querySelector('.nav-links');
+  const openTips = document.getElementById('openTips');
+  const tipsModal = document.getElementById('tips-modal');
+  const closeModal = document.querySelector('.close-modal');
+
+  // تنقل على الهواتف
+  navToggle?.addEventListener('click', () => navLinks.classList.toggle('show'));
+
+  // فتح واغلاق  للنصائح
+  openTips?.addEventListener('click', () => showModal(true));
+  closeModal?.addEventListener('click', () => showModal(false));
+  tipsModal?.addEventListener('click', e => { if(e.target === tipsModal) showModal(false); });
+
+  function showModal(show){
+    tipsModal.setAttribute('aria-hidden', !show);
+    tipsModal.classList.toggle('show', show);
+  }
+
+  // ======عداد الرضا البدني =========
+  const statValue = document.querySelector('.stat-value');
+  if(statValue){
+    const target = +statValue.dataset.target || 75;
+    animateCount(statValue, target, 1200);
+  }
+
+  function animateCount(el, target, duration){
+    let start = null;
+    const initial = 0;
+    function step(ts){
+      if(!start) start = ts;
+      const progress = Math.min((ts - start) / duration, 1);
+      el.textContent = Math.round(initial + (target - initial) * progress);
+      if(progress < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(ent => {
+      if(ent.isIntersecting) ent.target.classList.add('in-view');
+    });
+  }, {threshold: 0.15});
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  // ========= BMI =========
+  const bmiBtn = document.getElementById('calc-bmi');
+  const bmiWeight = document.getElementById('bmi-weight');
+  const bmiHeight = document.getElementById('bmi-height');
+  const bmiResult = document.getElementById('bmi-result');
+  const bmiProgress = document.getElementById('bmi-progress');
+
+  bmiBtn?.addEventListener('click', () => {
+    const w = parseFloat(bmiWeight.value);
+    const h = parseFloat(bmiHeight.value);
+    if(!w || !h){ bmiResult.textContent = 'يرجى إدخال الوزن والطول بشكل صحيح.'; return; }
+    const heightM = h / 100;
+    const bmi = w / (heightM * heightM);
+    const rounded = Math.round(bmi * 10) / 10;
+    let category = '';
+    if(bmi < 18.5) category = 'نقص وزن';
+    else if(bmi < 25) category = 'طبيعي';
+    else if(bmi < 30) category = 'وزن زائد';
+    else category = 'سمنة';
+    bmiResult.textContent = `BMI = ${rounded} — ${category}`;
+
+    // تحديث شريط تقدير: نحسب نسبة بسيطة بين 15 و 35 لتوضيح مكان المستخدم
+    const min = 15, max = 35;
+    const pct = Math.max(0, Math.min(100, ((bmi - min) / (max - min)) * 100));
+    bmiProgress.style.width = pct + '%';
+  });
+
+  // ========= Workout Timer =========
+  const timerInput = document.getElementById('timer-seconds');
+  const timerDisplay = document.getElementById('timer-display');
+  const startBtn = document.getElementById('timer-start');
+  const pauseBtn = document.getElementById('timer-pause');
+  const resetBtn = document.getElementById('timer-reset');
+
+  let timerId = null;
+  let remaining = 30;
+
+  function formatTime(sec){
+    const s = Math.max(0, Math.floor(sec));
+    const mm = String(Math.floor(s / 60)).padStart(2,'0');
+    const ss = String(s % 60).padStart(2,'0');
+    return `${mm}:${ss}`;
+  }
+
+  timerInput?.addEventListener('input', () => {
+    const v = Number(timerInput.value) || 30;
+    remaining = v;
+    timerDisplay.textContent = formatTime(remaining);
+  });
+
+  startBtn?.addEventListener('click', () => {
+    if(timerId) return;
+    const start = Date.now();
+    const endAt = Date.now() + remaining * 1000;
+    timerId = setInterval(() => {
+      remaining = Math.round((endAt - Date.now()) / 1000);
+      if(remaining <= 0){
+        remaining = 0;
+        timerDisplay.textContent = formatTime(remaining);
+        clearInterval(timerId); timerId = null;
+        alert('انتهى الوقت!');
+        return;
+      }
+      timerDisplay.textContent = formatTime(remaining);
+    }, 250);
+  });
+
+  pauseBtn?.addEventListener('click', () => {
+    if(timerId){ clearInterval(timerId); timerId = null; }
+  });
+  resetBtn?.addEventListener('click', () => {
+    if(timerId){ clearInterval(timerId); timerId = null; }
+    const v = Number(timerInput.value) || 30;
+    remaining = v;
+    timerDisplay.textContent = formatTime(remaining);
+  });
+  // ========= Water Tracker =========
+  const glasses = document.getElementById('glasses');
+  const waterResult = document.getElementById('water-result');
+  if(glasses){
+    const buttons = Array.from(glasses.querySelectorAll('.glass'));
+    function updateWater(){
+      const filled = buttons.filter(b => b.getAttribute('aria-pressed') === 'true').length;
+      waterResult.textContent = `${filled} / ${buttons.length}`;
+    }
+    buttons.forEach((btn, idx) => {
+      btn.addEventListener('click', () => {
+        const pressed = btn.getAttribute('aria-pressed') === 'true';
+        btn.setAttribute('aria-pressed', String(!pressed));
+        updateWater();
+      });
+    });
+    updateWater();
+  }
+  // ========= Smooth scroll for anchors =========
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      const href = a.getAttribute('href');
+      if(href.length > 1){
+        e.preventDefault();
+        const target = document.querySelector(href);
+        if(target) target.scrollIntoView({behavior:'smooth',block:'start'});
+      }
+    });
+  });
+});
+</script>
